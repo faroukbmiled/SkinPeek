@@ -1,0 +1,16 @@
+[Unit]
+Description=Run skinpeek deamon
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/skinpeek
+ExecStart=/bin/bash -c "export PATH=/root/.local/share/fnm:$PATH && eval \"$(/root/.local/share/fnm/fnm env)\" && fnm use 22.12.0  && node SkinPeek.js"
+Restart=on-failure
+StandardOutput=append:/home/skinpeek.log
+StandardError=append:/home/skinpeek.log
+Environment=NODE_ENV=development
+
+[Install]
+WantedBy=multi-user.target

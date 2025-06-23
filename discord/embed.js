@@ -189,7 +189,7 @@ export const renderAccessoryOffers = async (shop, interaction, valorantUser, KCe
     const embeds = [headerEmbed(headerText)];
     for (const offer of shop.accessory.offers) {
         for (const reward of offer.rewards){
-            
+
             switch (reward.ItemTypeID) {
                 case "d5f120f8-ff8c-4aac-92ea-f2b5acbe9475": //sprays
                     embeds.push(await sprayEmbed(reward.ItemID, offer.cost, interaction, KCemoji))
@@ -341,7 +341,7 @@ export const renderBundle = async (bundle, interaction, emoji, includeExpires=tr
         }
     }
 
-    if(includeExpires && bundle.expires) bundleTitleEmbed.description += ` (${(bundle.expires > Date.now() / 1000 ? 
+    if(includeExpires && bundle.expires) bundleTitleEmbed.description += ` (${(bundle.expires > Date.now() / 1000 ?
         s(interaction).info.EXPIRES : s(interaction).info.EXPIRED).f({t: bundle.expires})})`;
 
     const itemEmbeds = await renderBundleItems(bundle, interaction, emoji);
@@ -371,7 +371,7 @@ export const renderNightMarket = async (market, interaction, valorantUser, emoji
 
         embeds.push(embed);
     }
-    
+
     const components = switchAccountButtons(interaction, "nm", true);
 
     const levels = await getSkinLevels(market.offers, interaction, true);
@@ -408,11 +408,11 @@ export const renderBattlepass = async (battlepass, targetlevel, interaction, tar
 
         const forOtherUser = targetId && targetId !== interaction.user.id;
         const otherUserMention = `<@${targetId}>`;
-    
+
         let headerText;
         if(forOtherUser) {
             const json = readUserJson(targetId);
-    
+
             let usernameText = otherUserMention;
             if(json.accounts.length > 1) usernameText += ' ' + s(interaction).info.SWITCH_ACCOUNT_BUTTON.f({n: json.currentAccount});
 
@@ -713,7 +713,7 @@ export const skinCollectionSingleEmbed = async (interaction, id, user, {loadout,
 
     const components = [new ActionRowBuilder().addComponents(collectionSwitchEmbedButton(interaction, true, id)),]
     if(!someoneElseUsedCommand) components.push(...switchAccountButtons(interaction, "cl", false, false, id))
-    
+
     const levels = await getSkinLevels(skinsUuid.map(item=>item.uuid), interaction);
     if(levels) components.unshift(levels);
 

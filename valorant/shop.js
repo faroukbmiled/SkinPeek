@@ -15,6 +15,7 @@ import { addStore } from "../misc/stats.js";
 import config from "../misc/config.js";
 import { deleteUser, saveUser } from "./accountSwitcher.js";
 import { mqGetShop, useMultiqueue } from "../misc/multiqueue.js";
+import {inspect} from "util";
 
 export const getShop = async (id, account = null) => {
     if (useMultiqueue()) return await mqGetShop(id, account);
@@ -38,6 +39,7 @@ export const getShop = async (id, account = null) => {
     console.assert(req.statusCode === 200, `Valorant skins offers code is ${req.statusCode}!`, req);
 
     const json = JSON.parse(req.body);
+    // console.log(JSON.stringify(json, null, 2));
     if (json.httpStatus === 400 && json.errorCode === "BAD_CLAIMS") {
         deleteUserAuth(user);
         return { success: false }
@@ -73,7 +75,15 @@ export const getOffers = async (id, account = null) => {
 
     return await easterEggOffers(id, account, {
         success: true,
-        offers: resp.shop.SkinsPanelLayout.SingleItemOffers,
+        offers: resp.shop.SkinsPanelLayout.SingleItemOffers.map(offerId => {
+            const fullOffer = resp.shop.SkinsPanelLayout.SingleItemStoreOffers.find(o => o.OfferID === offerId);
+            const costValue = fullOffer ? Object.values(fullOffer.Cost)[0] : null;
+
+            return {
+                id: offerId,
+                price: costValue
+            };
+        }),
         expires: Math.floor(Date.now() / 1000) + resp.shop.SkinsPanelLayout.SingleItemOffersRemainingDurationInSeconds,
         accessory: {
             offers: (resp.shop.AccessoryStore.AccessoryStoreOffers || []).map(rawAccessory => {
@@ -228,7 +238,15 @@ const addShopCache = (puuid, shopJson) => {
     const now = Date.now();
     const shopCache = {
         offers: {
-            offers: shopJson.SkinsPanelLayout.SingleItemOffers,
+            offers: shopJson.SkinsPanelLayout.SingleItemOffers.map(offerId => {
+                const fullOffer = shopJson.SkinsPanelLayout.SingleItemStoreOffers.find(o => o.OfferID === offerId);
+                const costValue = fullOffer ? Object.values(fullOffer.Cost)[0] : null;
+
+                return {
+                    id: offerId,
+                    price: costValue
+                };
+            }),
             expires: Math.floor(now / 1000) + shopJson.SkinsPanelLayout.SingleItemOffersRemainingDurationInSeconds,
             accessory: {
                 offers: (shopJson.AccessoryStore.AccessoryStoreOffers || []).map(rawAccessory => {

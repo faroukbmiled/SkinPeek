@@ -427,11 +427,12 @@ export const getItem = async (uuid, type) => {
 
 export const getSkin = async (uuid, reloadData = true) => {
     if (reloadData) await fetchData([skins, prices]);
-
-    let skin = skins[uuid];
+    const skinuuid = uuid.id ?? uuid;
+    const skinprice = uuid.price ?? await getPrice(skinuuid);
+    let skin = skins[skinuuid];
     if (!skin) return null;
 
-    skin.price = await getPrice(uuid);
+    skin.price = skinprice;
 
     return skin;
 }

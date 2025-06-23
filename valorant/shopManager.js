@@ -13,6 +13,7 @@ export const fetchShop = async (interaction, user, targetId=interaction.user.id,
     const KCEmojiPromise = KCEmoji(interaction, channel)
 
     let shop = await getOffers(targetId);
+    // console.log(shop)
     if(shop.inQueue) shop = await waitForShopQueueResponse(shop);
 
     user = getUser(user);
@@ -21,7 +22,7 @@ export const fetchShop = async (interaction, user, targetId=interaction.user.id,
     }else {
         return await renderAccessoryOffers(shop, interaction, user, await KCEmojiPromise, targetId)
     }
-    
+
 }
 
 export const isThereANM = () => {
